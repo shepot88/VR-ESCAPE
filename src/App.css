@@ -178,5 +178,7 @@ body {
   align-items: center;
   font-size: 42px;
   margin-top: -40px;
-  box-shadow: 0 0 35px #ff00ff;
+  box-shadow: 0 0 25px #ff00ff;
+  /* neon fix */
+
 }
