@@ -1,10 +1,11 @@
+```jsx
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./App.css";
 
 const supabase = createClient(
   "https://aumoiucfasixxayevfsn.supabase.co",
-  "sb_publishable_h2_46fvtul7b1HfhCO7KLA_p0nDclkX"
+  "sb_publishable_h2_46fvtul7b1hFhCO7KLA_p0nDclkx"
 );
 
 function App() {
@@ -57,9 +58,45 @@ function App() {
           phone: phone.trim(),
           pin: pin.trim(),
           points: 500,
-          rank: "VOID WALKER",
+          xp: 0,
+          streak: 0,
+          answered_today: false,
+          rank: "Bronze",
         },
       ])
+      .select()
+      .single();
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    setUser(data);
+  }
+
+  async function answerQuestion(answer) {
+    if (user.answered_today) {
+      setError("Вече отговори днес");
+      return;
+    }
+
+    let newPoints = user.points;
+    let newXp = user.xp;
+
+    if (answer === "Minecraft") {
+      newPoints += 50;
+      newXp += 150;
+    }
+
+    const { data, error } = await supabase
+      .from("clients")
+      .update({
+        points: newPoints,
+        xp: newXp,
+        answered_today: true,
+      })
+      .eq("id", user.id)
       .select()
       .single();
 
@@ -90,11 +127,19 @@ function App() {
             onChange={(e) => setPin(e.target.value)}
           />
 
-          <button onClick={login}>Вход</button>
+          <button onClick={login}>
+            Вход
+          </button>
 
-          <button onClick={register}>Регистрация</button>
+          <button onClick={register}>
+            Регистрация
+          </button>
 
-          {error && <p className="error">{error}</p>}
+          {error && (
+            <p className="error">
+              {error}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -102,6 +147,7 @@ function App() {
 
   return (
     <div className="app">
+
       <div className="topBar">
         <h1>VR ESCAPE</h1>
 
@@ -111,9 +157,11 @@ function App() {
       </div>
 
       <div className="profileCard">
+
         <div className="avatar"></div>
 
         <div className="profileInfo">
+
           <h2>{user.phone}</h2>
 
           <p className="rank">
@@ -121,40 +169,76 @@ function App() {
           </p>
 
           <p className="xp">
-            1250 / 1800 XP
+            {user.xp} / 1800 XP
           </p>
 
           <div className="xpBar">
-            <div className="xpFill"></div>
+            <div
+              className="xpFill"
+              style={{
+                width: `${(user.xp / 1800) * 100}%`,
+              }}
+            ></div>
           </div>
+
+          <div className="stats">
+
+            <div className="statBox">
+              🔥 {user.streak} дни
+            </div>
+
+            <div className="statBox">
+              💎 {user.points} точки
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
       <div className="questionCard">
-        <h3>🔥 ВЪПРОС НА ДЕНЯ</h3>
+
+        <h3>
+          🔥 ВЪПРОС НА ДЕНЯ
+        </h3>
 
         <h2>
           Коя игра е най-продаваната?
         </h2>
 
-        <button className="answer">
+        <button
+          className="answer"
+          onClick={() => answerQuestion("GTA V")}
+        >
           GTA V
         </button>
 
-        <button className="answer active">
+        <button
+          className="answer active"
+          onClick={() => answerQuestion("Minecraft")}
+        >
           Minecraft
         </button>
 
-        <button className="answer">
+        <button
+          className="answer"
+          onClick={() => answerQuestion("Fortnite")}
+        >
           Fortnite
         </button>
 
-        <button className="answer">
+        <button
+          className="answer"
+          onClick={() => answerQuestion("Roblox")}
+        >
           Roblox
         </button>
+
       </div>
 
       <div className="bottomNav">
+
         <div className="navItem activeNav">
           🏠
         </div>
@@ -174,9 +258,18 @@ function App() {
         <div className="navItem">
           👤
         </div>
+
       </div>
+
+      {error && (
+        <p className="error bottomError">
+          {error}
+        </p>
+      )}
+
     </div>
   );
 }
 
 export default App;
+```
