@@ -2,8 +2,8 @@ import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  "ТУК_СЛОЖИ_SUPABASE_URL",
-  "ТУК_СЛОЖИ_SUPABASE_ANON_KEY"
+  "https://aumoiucfasixxayevfsn.supabase.co",
+  "sb_publishable_h2_46fvtul7b1HfhCO7KLA_p0nDclkX"
 );
 
 function App() {
@@ -34,14 +34,19 @@ function App() {
     return (
       <div style={styles.page}>
         <div style={styles.card}>
-          <h1>Добре дошъл</h1>
+          <h1 style={styles.title}>VR ESCAPE</h1>
 
           <h2>{user.name}</h2>
 
-          <p>Точки: {user.points}</p>
+          <p style={styles.text}>
+            Точки: {user.points}
+          </p>
 
-          <p>
-            Последно посещение:{" "}
+          <p style={styles.text}>
+            Последно посещение:
+          </p>
+
+          <p style={styles.text}>
             {user.last_visit_date || "няма"}
           </p>
         </div>
@@ -131,6 +136,11 @@ const styles = {
     fontSize: "22px",
     fontWeight: "bold",
     cursor: "pointer",
+  },
+
+  text: {
+    color: "white",
+    fontSize: "22px",
   },
 
   error: {
