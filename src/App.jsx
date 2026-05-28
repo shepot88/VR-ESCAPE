@@ -29,7 +29,19 @@ function App() {
       return;
     }
 
-    setUser(data);
+    const updatedPoints = data.points + 10;
+
+    await supabase
+      .from("clients")
+      .update({
+        points: updatedPoints,
+      })
+      .eq("id", data.id);
+
+    setUser({
+      ...data,
+      points: updatedPoints,
+    });
   }
 
   async function register() {
@@ -52,9 +64,9 @@ function App() {
         {
           phone: phone.trim(),
           pin: pin.trim(),
-          points: 1250,
-          xp: 1250,
-          streak: 7,
+          points: 100,
+          xp: 0,
+          streak: 1,
           rank: "VOID WALKER",
         },
       ])
@@ -69,15 +81,35 @@ function App() {
     setUser(data);
   }
 
-  function answerQuestion(answer) {
+  async function answerQuestion(answer) {
     if (selected) return;
 
     setSelected(answer);
 
+    let newXp = user.xp;
+    let newPoints = user.points;
+
     if (answer === "Minecraft") {
+      newXp += 50;
+      newPoints += 25;
+
       alert("✅ Правилен отговор +50 XP");
     } else {
       alert("❌ Грешен отговор");
+    }
+
+    const { data, error } = await supabase
+      .from("clients")
+      .update({
+        xp: newXp,
+        points: newPoints,
+      })
+      .eq("id", user.id)
+      .select()
+      .single();
+
+    if (!error) {
+      setUser(data);
     }
   }
 
