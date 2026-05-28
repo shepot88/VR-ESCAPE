@@ -5,232 +5,180 @@
 }
 
 body {
-  background: #0b0218;
-  font-family: Arial;
+  background: #070816;
+  font-family: Arial, sans-serif;
   color: white;
 }
 
 .app {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, #4d148c, #0b0218 60%);
+    radial-gradient(circle at top, #34115c, #070816 70%);
   padding: 20px;
+  padding-bottom: 120px;
 }
 
 .topBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .topBar h1 {
-  color: #63cfff;
-  font-size: 52px;
-  text-shadow: 0 0 20px #00bbff;
+  font-size: 42px;
+  color: #59d8ff;
+  text-shadow: 0 0 20px #59d8ff;
 }
 
 .bell {
-  width: 70px;
-  height: 70px;
-  border-radius: 20px;
+  width: 60px;
+  height: 60px;
   background: rgba(255,255,255,0.08);
+  border-radius: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 30px;
-}
-
-.profileCard {
-  margin-top: 30px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 30px;
-  padding: 30px;
-  display: flex;
-  gap: 30px;
   align-items: center;
-  box-shadow: 0 0 30px #7b2cff;
-}
-
-.avatar {
-  width: 170px;
-  height: 170px;
-  border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    #ff00ff,
-    #00d9ff
-  );
-  box-shadow: 0 0 40px #ff00ff;
-}
-
-.profileInfo h2 {
-  font-size: 60px;
-}
-
-.rank {
-  color: #ff00ff;
-  margin-top: 10px;
-  font-size: 34px;
-}
-
-.xp {
-  margin-top: 20px;
   font-size: 28px;
 }
 
+.profileCard {
+  background: rgba(255,255,255,0.05);
+  border-radius: 35px;
+  padding: 25px;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 0 35px #8a2eff;
+}
+
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ff00ff,#59d8ff);
+  box-shadow: 0 0 30px #ff00ff;
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.profileInfo h2 {
+  font-size: 44px;
+  margin-bottom: 5px;
+}
+
+.rank {
+  color: #ff4dff;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.xp {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
 .xpBar {
-  margin-top: 20px;
-  width: 100%;
-  height: 25px;
-  border-radius: 30px;
+  height: 22px;
   background: rgba(255,255,255,0.1);
+  border-radius: 30px;
   overflow: hidden;
+  margin-bottom: 15px;
 }
 
 .xpFill {
-  width: 65%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    #ff00ff,
-    #00d9ff
-  );
+  border-radius: 30px;
+  background: linear-gradient(90deg,#ff00ff,#59d8ff);
+  box-shadow: 0 0 15px #ff00ff;
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+}
+
+.statBox {
+  background: rgba(255,255,255,0.08);
+  padding: 10px 16px;
+  border-radius: 18px;
+  font-size: 20px;
 }
 
 .questionCard {
-  margin-top: 30px;
+  .questionCard {
+  position: relative;
+  z-index: 1000;
+
   background: rgba(255,255,255,0.05);
-  border-radius: 30px;
-  padding: 30px;
+  border-radius: 35px;
+  padding: 25px;
+  box-shadow: 0 0 25px #5b1cff;
+}
 }
 
 .questionCard h3 {
   color: orange;
-  font-size: 36px;
+  font-size: 30px;
+  margin-bottom: 20px;
 }
 
 .questionCard h2 {
-  margin-top: 25px;
-  font-size: 58px;
+  font-size: 56px;
   line-height: 1.1;
+  margin-bottom: 30px;
 }
 
 .answer {
   width: 100%;
-  margin-top: 25px;
   border: none;
+  margin-bottom: 18px;
+  padding: 26px;
   border-radius: 25px;
-  padding: 30px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.08);
   color: white;
-  font-size: 42px;
+  font-size: 32px;
 }
 
-.active {
-  background: linear-gradient(
-    90deg,
-    #ff00ff,
-    #c95cff
-  );
-
+.answer.active {
+  background: linear-gradient(90deg,#ff00ff,#d966ff);
   box-shadow: 0 0 30px #ff00ff;
 }
 
 .bottomNav {
   position: fixed;
-  left: 0;
-  right: 0;
   bottom: 0;
-  height: 130px;
-  background: black;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(0,0,0,0.85);
   display: flex;
   justify-content: space-around;
   align-items: center;
+  z-index: 999;
 }
 
 .navItem {
-  font-size: 40px;
+  font-size: 34px;
   opacity: 0.7;
 }
 
 .activeNav {
+  opacity: 1;
   color: #ff00ff;
 }
 
 .scanButton {
-  width: 120px;
-  height: 120px;
+  width: 95px;
+  height: 95px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    #ff00ff,
-    #00d9ff
-  );
-
+  background: linear-gradient(135deg,#ff00ff,#59d8ff);
   display: flex;
-  align-items: center;
   justify-content: center;
-
-  font-size: 50px;
-
-  margin-top: -50px;
-
-  box-shadow: 0 0 40px #ff00ff;
-}
-
-.loginPage {
-  min-height: 100vh;
-  display: flex;
   align-items: center;
-  justify-content: center;
-
-  background:
-    radial-gradient(circle at top, #4d148c, #0b0218 60%);
-}
-
-.loginCard {
-  width: 420px;
-  padding: 40px;
-  border-radius: 30px;
-  background: rgba(255,255,255,0.05);
-
-  box-shadow: 0 0 40px #7b2cff;
-}
-
-.loginCard h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #ff00ff;
-}
-
-.loginCard input {
-  width: 100%;
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: 20px;
-  border: 2px solid #00bbff;
-  background: black;
-  color: white;
-  font-size: 20px;
-}
-
-.loginCard button {
-  width: 100%;
-  margin-top: 20px;
-  padding: 18px;
-  border: none;
-  border-radius: 20px;
-  font-size: 22px;
-  color: white;
-  background: linear-gradient(
-    90deg,
-    #ff00ff,
-    #00d9ff
-  );
-}
-
-.error {
-  margin-top: 20px;
-  color: red;
-  text-align: center;
+  font-size: 42px;
+  margin-top: -40px;
+  box-shadow: 0 0 35px #ff00ff;
 }

@@ -1,11 +1,10 @@
-```jsx
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./App.css";
 
 const supabase = createClient(
   "https://aumoiucfasixxayevfsn.supabase.co",
-  "sb_publishable_h2_46fvtul7b1hFhCO7KLA_p0nDclkx"
+  "sb_publishable_h2_46fvtul7b1HfhCO7KLA_p0nDclkX"
 );
 
 function App() {
@@ -13,6 +12,7 @@ function App() {
   const [pin, setPin] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+  const [selected, setSelected] = useState("");
 
   async function login() {
     setError("");
@@ -57,11 +57,10 @@ function App() {
         {
           phone: phone.trim(),
           pin: pin.trim(),
-          points: 500,
-          xp: 0,
-          streak: 0,
-          answered_today: false,
-          rank: "Bronze",
+          points: 1250,
+          xp: 1250,
+          streak: 7,
+          rank: "VOID WALKER",
         },
       ])
       .select()
@@ -75,43 +74,23 @@ function App() {
     setUser(data);
   }
 
-  async function answerQuestion(answer) {
-    if (user.answered_today) {
-      setError("Вече отговори днес");
-      return;
-    }
+  function answerQuestion(answer) {
+    if (selected) return;
 
-    let newPoints = user.points;
-    let newXp = user.xp;
+    setSelected(answer);
 
     if (answer === "Minecraft") {
-      newPoints += 50;
-      newXp += 150;
+      alert("✅ Правилен отговор +50 XP");
+    } else {
+      alert("❌ Грешен отговор");
     }
-
-    const { data, error } = await supabase
-      .from("clients")
-      .update({
-        points: newPoints,
-        xp: newXp,
-        answered_today: true,
-      })
-      .eq("id", user.id)
-      .select()
-      .single();
-
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    setUser(data);
   }
 
   if (!user) {
     return (
       <div className="loginPage">
         <div className="loginCard">
+
           <h1>VR ESCAPE</h1>
 
           <input
@@ -140,6 +119,7 @@ function App() {
               {error}
             </p>
           )}
+
         </div>
       </div>
     );
@@ -149,11 +129,13 @@ function App() {
     <div className="app">
 
       <div className="topBar">
+
         <h1>VR ESCAPE</h1>
 
         <div className="bell">
           🔔
         </div>
+
       </div>
 
       <div className="profileCard">
@@ -208,28 +190,28 @@ function App() {
         </h2>
 
         <button
-          className="answer"
+          className={`answer ${selected === "GTA V" ? "active" : ""}`}
           onClick={() => answerQuestion("GTA V")}
         >
           GTA V
         </button>
 
         <button
-          className="answer active"
+          className={`answer ${selected === "Minecraft" ? "active" : ""}`}
           onClick={() => answerQuestion("Minecraft")}
         >
           Minecraft
         </button>
 
         <button
-          className="answer"
+          className={`answer ${selected === "Fortnite" ? "active" : ""}`}
           onClick={() => answerQuestion("Fortnite")}
         >
           Fortnite
         </button>
 
         <button
-          className="answer"
+          className={`answer ${selected === "Roblox" ? "active" : ""}`}
           onClick={() => answerQuestion("Roblox")}
         >
           Roblox
@@ -261,15 +243,8 @@ function App() {
 
       </div>
 
-      {error && (
-        <p className="error bottomError">
-          {error}
-        </p>
-      )}
-
     </div>
   );
 }
 
 export default App;
-```
