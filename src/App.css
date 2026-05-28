@@ -1,128 +1,234 @@
-import { useState } from "react"
-import { supabase } from "./supabase"
-
-function App() {
-  const [phone, setPhone] = useState("")
-  const [client, setClient] = useState(null)
-
-  const handleLogin = async () => {
-    const { data, error } = await supabase
-      .from("clients")
-      .select("*")
-      .eq("phone", phone)
-      .single()
-
-    if (error || !data) {
-      alert("Няма такъв клиент")
-      return
-    }
-
-    setClient(data)
-  }
-
-  if (client) {
-    return (
-      <div
-        style={{
-          background: "#0f172a",
-          color: "white",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontFamily: "Arial",
-        }}
-      >
-        <div
-          style={{
-            background: "#1e293b",
-            padding: "40px",
-            borderRadius: "20px",
-            width: "350px",
-            textAlign: "center",
-          }}
-        >
-          <h1>{client.name}</h1>
-
-          <h2>⭐ Точки: {client.points}</h2>
-
-          <h3>🎮 Посещения: {client.visits}</h3>
-
-          <button
-            onClick={() => setClient(null)}
-            style={{
-              padding: "12px",
-              marginTop: "20px",
-              border: "none",
-              borderRadius: "10px",
-              background: "#9333ea",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            Изход
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div
-      style={{
-        background: "#0f172a",
-        color: "white",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Arial",
-      }}
-    >
-      <div
-        style={{
-          background: "#1e293b",
-          padding: "40px",
-          borderRadius: "20px",
-          width: "350px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "15px",
-        }}
-      >
-        <h1 style={{ textAlign: "center" }}>
-          VR ESCAPE LOGIN
-        </h1>
-
-        <input
-          type="text"
-          placeholder="Телефон"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          style={{
-            padding: "15px",
-            borderRadius: "10px",
-            border: "none",
-          }}
-        />
-
-        <button
-          onClick={handleLogin}
-          style={{
-            padding: "15px",
-            borderRadius: "10px",
-            border: "none",
-            background: "#9333ea",
-            color: "white",
-            fontSize: "18px",
-            cursor: "pointer",
-          }}
-        >
-          Вход
-        </button>
-      </div>
-    </div>
-  )
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Orbitron, sans-serif;
 }
 
-export default App
+body {
+  background: #050816;
+  color: white;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 20px;
+  padding-bottom: 120px;
+  background:
+    radial-gradient(circle at top, #34115e, #050816 40%);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.topbar h1 {
+  font-size: 40px;
+  color: #5ecbff;
+  text-shadow: 0 0 20px #00aaff;
+}
+
+.bell {
+  width: 55px;
+  height: 55px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 22px;
+}
+
+.profile-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 0 30px rgba(183,0,255,0.25);
+  margin-bottom: 25px;
+}
+
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ff00ff,#00d9ff);
+  box-shadow: 0 0 25px #ae00ff;
+}
+
+.profile-info h2 {
+  font-size: 36px;
+}
+
+.rank {
+  color: #ff00ff;
+  margin-top: 5px;
+  margin-bottom: 12px;
+}
+
+.xp-row span {
+  font-size: 14px;
+}
+
+.xp-bar {
+  width: 100%;
+  height: 14px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.xp-fill {
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(90deg,#ff00ff,#00d9ff);
+  box-shadow: 0 0 15px #ff00ff;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 28px;
+  padding: 25px;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 25px rgba(183,0,255,0.2);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ff7b00;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.question-card h3 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.answer {
+  width: 100%;
+  border: none;
+  margin-bottom: 12px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 22px;
+}
+
+.active {
+  background: linear-gradient(90deg,#ff00ff,#c44dff);
+  box-shadow: 0 0 20px #ff00ff;
+}
+
+.main-btn {
+  width: 100%;
+  border: none;
+  padding: 20px;
+  border-radius: 22px;
+  margin-top: 15px;
+  font-size: 24px;
+  color: white;
+  background: linear-gradient(90deg,#ff00ff,#9d4dff);
+  box-shadow: 0 0 25px rgba(255,0,255,0.5);
+}
+
+.blue {
+  background: linear-gradient(90deg,#00d9ff,#00a2ff);
+}
+
+.points-card {
+  text-align: center;
+}
+
+.points-card h2 {
+  font-size: 70px;
+  color: white;
+}
+
+.points-card p {
+  color: #00d9ff;
+  font-size: 24px;
+}
+
+.rank-card {
+  text-align: center;
+}
+
+.rank-image {
+  height: 220px;
+  border-radius: 25px;
+  margin: 20px 0;
+  background: linear-gradient(135deg,#2d004d,#9d00ff);
+  box-shadow: 0 0 30px #ae00ff;
+}
+
+.leader {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.05);
+}
+
+.current {
+  border: 1px solid #00d9ff;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 95px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #999;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.active-nav {
+  color: #ff00ff;
+}
+
+.qr-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ff00ff,#00d9ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  margin-top: -40px;
+  box-shadow: 0 0 35px #ae00ff;
+}
