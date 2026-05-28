@@ -26,7 +26,7 @@ function App() {
     console.log(error);
 
     if (error) {
-      setError("Server error");
+      setError(error.message);
       return;
     }
 
