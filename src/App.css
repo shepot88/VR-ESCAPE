@@ -182,3 +182,57 @@ body {
   /* neon fix */
 
 }
+.loginScreen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at top, #34115c, #070816 70%);
+}
+
+.loginBox {
+  width: 420px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 35px;
+  padding: 40px;
+  box-shadow: 0 0 40px #8a2eff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loginTitle {
+  font-size: 56px;
+  text-align: center;
+  color: white;
+  text-shadow: 0 0 20px #59d8ff;
+}
+
+.loginInput {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 24px;
+  outline: none;
+}
+
+.loginInput::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.loginButton {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-radius: 18px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(90deg,#ff00ff,#59d8ff);
+  box-shadow: 0 0 25px #ff00ff;
+}

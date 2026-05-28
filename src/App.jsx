@@ -24,17 +24,40 @@ function App() {
       .eq("pin", pin.trim())
       .maybeSingle();
 
-    if (error) {
-      setError(error.message);
-      return;
-    }
+    if (!user) {
+  return (
+    <div className="loginScreen">
+      <div className="loginBox">
 
-    if (!data) {
-      setError("Грешен телефон или PIN");
-      return;
-    }
+        <h1 className="loginTitle">
+          VR ESCAPE
+        </h1>
 
-    setUser(data);
+        <input
+          className="loginInput"
+          placeholder="Телефон"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+
+        <input
+          className="loginInput"
+          placeholder="PIN"
+          type="password"
+          value={pin}
+          onChange={(e) => setPin(e.target.value)}
+        />
+
+        <button
+          className="loginButton"
+          onClick={login}
+        >
+          Вход
+        </button>
+
+      </div>
+    </div>
+  );
   }
 
   async function register() {
