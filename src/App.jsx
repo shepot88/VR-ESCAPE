@@ -1,63 +1,52 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./supabase";
-import "./App.css";
+import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "ТУК_СЛОЖИ_SUPABASE_URL",
+  "ТУК_СЛОЖИ_SUPABASE_ANON_KEY"
+);
 
 function App() {
   const [phone, setPhone] = useState("");
   const [pin, setPin] = useState("");
-  const [player, setPlayer] = useState(null);
-  const [leaders, setLeaders] = useState([]);
-
-  useEffect(() => {
-    loadLeaderboard();
-  }, []);
-
-  async function loadLeaderboard() {
-    const { data } = await supabase
-      .from("clients")
-      .select("*")
-      .order("points", { ascending: false });
-
-    setLeaders(data || []);
-  }
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
 
   async function login() {
-    if (!phone || !pin) {
-      alert("Въведи телефон и PIN");
-      return;
-    }
+    setError("");
 
-    const { data: existing } = await supabase
+    const { data, error } = await supabase
       .from("clients")
       .select("*")
       .eq("phone", phone)
+      .eq("pin", pin)
       .single();
 
-    if (!existing) {
-      const { data } = await supabase
-        .from("clients")
-        .insert([
-          {
-            phone,
-            pin,
-            name: "Играч",
-            points: 0,
-          },
-        ])
-        .select()
-        .single();
-
-      setPlayer(data);
-      loadLeaderboard();
+    if (error || !data) {
+      setError("Грешен телефон или PIN");
       return;
     }
 
-    if (existing.pin !== pin) {
-      alert("Грешен PIN");
-      return;
-    }
+    setUser(data);
+  }
 
-    setPlayer(existing);
+  if (user) {
+    return (
+      <div style={styles.page}>
+        <div style={styles.card}>
+          <h1>Добре дошъл</h1>
+
+          <h2>{user.name}</h2>
+
+          <p>Точки: {user.points}</p>
+
+          <p>
+            Последно посещение:{" "}
+            {user.last_visit_date || "няма"}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -65,52 +54,31 @@ function App() {
       <div style={styles.card}>
         <h1 style={styles.title}>VR ESCAPE</h1>
 
-        {!player ? (
-          <>
-            <input
-              placeholder="Телефон"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              style={styles.input}
-            />
+        <input
+          type="text"
+          placeholder="Телефон"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          style={styles.input}
+        />
 
-            <input
-              placeholder="PIN"
-              type="password"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              style={styles.input}
-            />
+        <input
+          type="password"
+          placeholder="PIN"
+          value={pin}
+          onChange={(e) => setPin(e.target.value)}
+          style={styles.input}
+        />
 
-            <button onClick={login} style={styles.button}>
-              Вход / Регистрация
-            </button>
-          </>
-        ) : (
-          <>
-            <h2>{player.name}</h2>
+        <button onClick={login} style={styles.button}>
+          Вход
+        </button>
 
-            <div style={styles.points}>
-              Точки: {player.points}
-            </div>
-          </>
+        {error && (
+          <p style={styles.error}>
+            {error}
+          </p>
         )}
-      </div>
-
-      <div style={styles.leaderboard}>
-        <h2>Класация</h2>
-
-        {leaders.map((player, index) => (
-          <div key={player.id} style={styles.row}>
-            <span>
-              #{index + 1} {player.name}
-            </span>
-
-            <span>
-              {player.points} т.
-            </span>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -118,70 +86,56 @@ function App() {
 
 const styles = {
   page: {
-    background: "#050510",
     minHeight: "100vh",
-    color: "white",
+    background: "#071133",
     display: "flex",
-    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
-    padding: "30px",
-    fontFamily: "Arial",
+    padding: "20px",
   },
 
   card: {
-    background: "rgba(255,255,255,0.05)",
+    background: "#1e2945",
     padding: "30px",
     borderRadius: "20px",
-    width: "320px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-    boxShadow: "0 0 30px #ff00ff55",
+    width: "100%",
+    maxWidth: "400px",
+    textAlign: "center",
   },
 
   title: {
-    textAlign: "center",
-    color: "#ff00ff",
+    color: "white",
+    fontSize: "48px",
+    marginBottom: "25px",
   },
 
   input: {
-    padding: "12px",
-    borderRadius: "10px",
-    border: "none",
-    outline: "none",
-    fontSize: "16px",
+    width: "100%",
+    padding: "16px",
+    marginBottom: "15px",
+    borderRadius: "12px",
+    border: "2px solid #4c8bf5",
+    background: "black",
+    color: "white",
+    fontSize: "20px",
+    boxSizing: "border-box",
   },
 
   button: {
-    padding: "12px",
-    borderRadius: "10px",
+    width: "100%",
+    padding: "16px",
+    borderRadius: "14px",
     border: "none",
-    background: "#ff00ff",
+    background: "#d624ff",
     color: "white",
+    fontSize: "22px",
     fontWeight: "bold",
     cursor: "pointer",
   },
 
-  points: {
-    fontSize: "24px",
-    textAlign: "center",
-  },
-
-  leaderboard: {
-    marginTop: "30px",
-    width: "320px",
-    background: "rgba(255,255,255,0.05)",
-    padding: "20px",
-    borderRadius: "20px",
-  },
-
-  row: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px",
-    background: "rgba(255,255,255,0.08)",
-    marginTop: "10px",
-    borderRadius: "10px",
+  error: {
+    color: "red",
+    marginTop: "15px",
   },
 };
 
