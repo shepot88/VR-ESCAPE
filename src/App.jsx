@@ -4,7 +4,7 @@ import "./App.css";
 
 const supabase = createClient(
   "https://aumoiucfasixxayevfsn.supabase.co",
-  "ТУК_СЛОЖИ_PUBLISHABLE_KEY"
+  "sb_publishable_h2_46fvtul7b1HfhCO7KLA_p0nDclkX"
 );
 
 function App() {
