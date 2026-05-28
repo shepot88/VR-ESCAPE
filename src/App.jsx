@@ -30,24 +30,50 @@ function App() {
     setUser(data);
   }
 
+  async function register() {
+    setError("");
+
+    const { data: existingUser } = await supabase
+      .from("clients")
+      .select("*")
+      .eq("phone", phone)
+      .single();
+
+    if (existingUser) {
+      setError("Този телефон вече съществува");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("clients")
+      .insert([
+        {
+          phone: phone,
+          pin: pin,
+          points: 0,
+        },
+      ]);
+
+    if (error) {
+      setError("Грешка при регистрация");
+      return;
+    }
+
+    alert("Успешна регистрация!");
+  }
+
   if (user) {
     return (
-      <div style={styles.page}>
+      <div style={styles.container}>
         <div style={styles.card}>
-          <h1 style={styles.title}>VR ESCAPE</h1>
+          <h1 style={styles.title}>Добре дошъл</h1>
 
-          <h2>{user.name}</h2>
+          <p style={styles.text}>
+            Телефон: {user.phone}
+          </p>
 
           <p style={styles.text}>
             Точки: {user.points}
-          </p>
-
-          <p style={styles.text}>
-            Последно посещение:
-          </p>
-
-          <p style={styles.text}>
-            {user.last_visit_date || "няма"}
           </p>
         </div>
       </div>
@@ -55,7 +81,7 @@ function App() {
   }
 
   return (
-    <div style={styles.page}>
+    <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.title}>VR ESCAPE</h1>
 
@@ -79,6 +105,10 @@ function App() {
           Вход
         </button>
 
+        <button onClick={register} style={styles.registerButton}>
+          Регистрация
+        </button>
+
         {error && (
           <p style={styles.error}>
             {error}
@@ -90,62 +120,76 @@ function App() {
 }
 
 const styles = {
-  page: {
+  container: {
     minHeight: "100vh",
-    background: "#071133",
+    background: "#020b2c",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: "20px",
+    padding: 20,
   },
 
   card: {
-    background: "#1e2945",
-    padding: "30px",
-    borderRadius: "20px",
+    background: "#1d2948",
+    padding: 30,
+    borderRadius: 25,
     width: "100%",
-    maxWidth: "400px",
-    textAlign: "center",
+    maxWidth: 400,
+    display: "flex",
+    flexDirection: "column",
+    gap: 15,
   },
 
   title: {
     color: "white",
-    fontSize: "48px",
-    marginBottom: "25px",
-  },
-
-  input: {
-    width: "100%",
-    padding: "16px",
-    marginBottom: "15px",
-    borderRadius: "12px",
-    border: "2px solid #4c8bf5",
-    background: "black",
-    color: "white",
-    fontSize: "20px",
-    boxSizing: "border-box",
-  },
-
-  button: {
-    width: "100%",
-    padding: "16px",
-    borderRadius: "14px",
-    border: "none",
-    background: "#d624ff",
-    color: "white",
-    fontSize: "22px",
-    fontWeight: "bold",
-    cursor: "pointer",
+    textAlign: "center",
+    fontSize: 50,
+    marginBottom: 10,
   },
 
   text: {
     color: "white",
-    fontSize: "22px",
+    fontSize: 22,
+    textAlign: "center",
+  },
+
+  input: {
+    padding: 18,
+    borderRadius: 18,
+    border: "3px solid #4d8dff",
+    background: "black",
+    color: "white",
+    fontSize: 24,
+    outline: "none",
+  },
+
+  button: {
+    padding: 18,
+    borderRadius: 18,
+    border: "none",
+    background: "#d72cff",
+    color: "white",
+    fontSize: 28,
+    fontWeight: "bold",
+    cursor: "pointer",
+  },
+
+  registerButton: {
+    padding: 18,
+    borderRadius: 18,
+    border: "none",
+    background: "#4d8dff",
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+    cursor: "pointer",
   },
 
   error: {
     color: "red",
-    marginTop: "15px",
+    textAlign: "center",
+    fontSize: 24,
+    marginTop: 10,
   },
 };
 
