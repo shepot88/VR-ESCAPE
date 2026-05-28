@@ -19,15 +19,19 @@ function App() {
       .from("clients")
       .select("*")
       .eq("phone", phone)
-      .eq("pin", pin)
-      .single();
+      .eq("pin", pin);
 
-    if (error || !data) {
+    if (error) {
+      setError("Server error");
+      return;
+    }
+
+    if (!data || data.length === 0) {
       setError("Грешен телефон или PIN");
       return;
     }
 
-    setUser(data);
+    setUser(data[0]);
   }
 
   async function register() {
@@ -36,10 +40,9 @@ function App() {
     const { data: existingUser } = await supabase
       .from("clients")
       .select("*")
-      .eq("phone", phone)
-      .single();
+      .eq("phone", phone);
 
-    if (existingUser) {
+    if (existingUser && existingUser.length > 0) {
       setError("Този телефон вече съществува");
       return;
     }
@@ -48,9 +51,9 @@ function App() {
       .from("clients")
       .insert([
         {
-          phone: phone,
-          pin: pin,
-          points: 0,
+          phone,
+          pin,
+          points: 10,
         },
       ]);
 
@@ -63,69 +66,98 @@ function App() {
   }
 
   if (user) {
-    const level =
-      user.points >= 1000
-        ? "VOID WALKER"
-        : user.points >= 500
-        ? "PHANTOM"
-        : user.points >= 250
-        ? "RAIDER"
-        : "ROOKIE";
-
-    const progress = (user.points % 250) / 2.5;
-
     return (
-      <div style={styles.gameContainer}>
+      <div style={styles.container}>
+        <div style={styles.topBar}>
+          <h1 style={styles.logo}>VOID WALKER</h1>
+        </div>
+
         <div style={styles.profileCard}>
-          <div style={styles.avatar}>
-            👾
+          <div style={styles.avatar}></div>
+
+          <div>
+            <h2 style={styles.username}>{user.phone}</h2>
+
+            <p style={styles.rank}>
+              🔮 VOID WALKER
+            </p>
+
+            <div style={styles.xpBar}>
+              <div style={styles.xpFill}></div>
+            </div>
+
+            <p style={styles.points}>
+              {user.points} точки
+            </p>
           </div>
+        </div>
 
-          <h1 style={styles.username}>
-            {user.phone}
-          </h1>
+        <div style={styles.questionCard}>
+          <h2 style={styles.questionTitle}>
+            🔥 ВЪПРОС НА ДЕНЯ
+          </h2>
 
-          <div style={styles.rank}>
-            {level}
-          </div>
+          <p style={styles.question}>
+            Коя игра е най-продаваната?
+          </p>
 
-          <div style={styles.pointsBox}>
-            ⚡ {user.points} XP
-          </div>
-
-          <div style={styles.xpBarBackground}>
-            <div
-              style={{
-                ...styles.xpBarFill,
-                width: `${progress}%`,
-              }}
-            />
-          </div>
-
-          <button style={styles.dailyButton}>
-            🎁 DAILY REWARD
+          <button style={styles.answerButton}>
+            GTA V
           </button>
 
-          <div style={styles.menuGrid}>
-            <div style={styles.menuCard}>
-              🏆
-              <span>Leaderboard</span>
-            </div>
+          <button style={styles.answerButtonActive}>
+            Minecraft
+          </button>
 
-            <div style={styles.menuCard}>
-              ❓
-              <span>Question</span>
-            </div>
+          <button style={styles.answerButton}>
+            Fortnite
+          </button>
 
-            <div style={styles.menuCard}>
-              🎮
-              <span>Missions</span>
-            </div>
+          <button style={styles.answerButton}>
+            Roblox
+          </button>
 
-            <div style={styles.menuCard}>
-              🎁
-              <span>Rewards</span>
-            </div>
+          <button style={styles.bigButton}>
+            ⚡ ОТГОВОРИ
+          </button>
+        </div>
+
+        <div style={styles.bottomRow}>
+          <div style={styles.smallCard}>
+            <h3>🎁 DAILY BONUS</h3>
+
+            <p>+15 точки</p>
+
+            <button style={styles.claimButton}>
+              ВЗЕМИ
+            </button>
+          </div>
+
+          <div style={styles.smallCard}>
+            <h3>🔥 STREAK</h3>
+
+            <p>7 дни подред</p>
+
+            <p>Следващ бонус +25</p>
+          </div>
+        </div>
+
+        <div style={styles.leaderboard}>
+          <h2>🏆 ТОП ИГРАЧИ</h2>
+
+          <div style={styles.player}>
+            <span>#1 VOID_MASTER</span>
+            <span>2560</span>
+          </div>
+
+          <div style={styles.player}>
+            <span>#2 CYBER_WOLF</span>
+            <span>1890</span>
+          </div>
+
+          <div style={styles.player}>
+            <span>#3 GLITCHER</span>
+            <span>1420</span>
           </div>
         </div>
       </div>
@@ -134,8 +166,8 @@ function App() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>VR ESCAPE</h1>
+      <div style={styles.loginCard}>
+        <h1 style={styles.logo}>VR ESCAPE</h1>
 
         <input
           type="text"
@@ -153,7 +185,7 @@ function App() {
           style={styles.input}
         />
 
-        <button onClick={login} style={styles.button}>
+        <button onClick={login} style={styles.loginButton}>
           Вход
         </button>
 
@@ -174,189 +206,212 @@ function App() {
 const styles = {
   container: {
     minHeight: "100vh",
-    background: "#020b2c",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    background: "#020617",
     padding: 20,
+    color: "white",
+    fontFamily: "Arial",
   },
 
-  card: {
-    background: "#1d2948",
+  topBar: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+
+  logo: {
+    fontSize: 42,
+    color: "#d946ef",
+    textShadow: "0 0 20px #d946ef",
+  },
+
+  loginCard: {
+    background: "#111827",
     padding: 30,
     borderRadius: 25,
-    width: "100%",
-    maxWidth: 400,
+    maxWidth: 420,
+    margin: "50px auto",
     display: "flex",
     flexDirection: "column",
     gap: 15,
-    boxShadow: "0 0 40px #ff00ff33",
-  },
-
-  title: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 50,
-    marginBottom: 10,
-  },
-
-  text: {
-    color: "white",
-    fontSize: 22,
-    textAlign: "center",
+    boxShadow: "0 0 30px #9333ea55",
   },
 
   input: {
     padding: 18,
     borderRadius: 18,
-    border: "3px solid #4d8dff",
-    background: "black",
+    border: "2px solid #3b82f6",
+    background: "#000",
     color: "white",
-    fontSize: 24,
-    outline: "none",
+    fontSize: 22,
   },
 
-  button: {
+  loginButton: {
     padding: 18,
     borderRadius: 18,
     border: "none",
-    background:
-      "linear-gradient(90deg,#ff00ff,#6a00ff)",
+    background: "#d946ef",
     color: "white",
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
-    cursor: "pointer",
   },
 
   registerButton: {
     padding: 18,
     borderRadius: 18,
     border: "none",
-    background:
-      "linear-gradient(90deg,#00e5ff,#0066ff)",
+    background: "#06b6d4",
     color: "white",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
-    cursor: "pointer",
   },
 
   error: {
     color: "red",
     textAlign: "center",
-    fontSize: 24,
-    marginTop: 10,
-  },
-
-  gameContainer: {
-    minHeight: "100vh",
-    background:
-      "linear-gradient(180deg,#050816,#0b1023,#14002d)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+    fontSize: 20,
   },
 
   profileCard: {
-    width: "100%",
-    maxWidth: 420,
-    background: "rgba(255,255,255,0.05)",
-    borderRadius: 30,
-    padding: 30,
-    backdropFilter: "blur(12px)",
-    boxShadow: "0 0 40px #ff00ff55",
+    background: "#111827",
+    borderRadius: 25,
+    padding: 20,
     display: "flex",
-    flexDirection: "column",
+    gap: 20,
     alignItems: "center",
+    marginBottom: 20,
+    boxShadow: "0 0 20px #9333ea33",
   },
 
   avatar: {
-    width: 110,
-    height: 110,
+    width: 100,
+    height: 100,
     borderRadius: "50%",
     background:
-      "linear-gradient(135deg,#ff00ff,#6a00ff)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    fontSize: 50,
-    marginBottom: 20,
+      "linear-gradient(135deg,#d946ef,#3b82f6)",
   },
 
   username: {
-    color: "white",
-    fontSize: 28,
+    fontSize: 34,
     margin: 0,
   },
 
   rank: {
-    color: "#00e5ff",
-    fontSize: 22,
-    fontWeight: "bold",
-    marginTop: 8,
-    letterSpacing: 2,
+    color: "#d946ef",
+    fontSize: 20,
   },
 
-  pointsBox: {
-    marginTop: 20,
-    background: "#111827",
-    padding: "14px 25px",
+  xpBar: {
+    width: 220,
+    height: 12,
+    background: "#222",
     borderRadius: 20,
-    color: "#00ffcc",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-
-  xpBarBackground: {
-    width: "100%",
-    height: 18,
-    background: "#1f2937",
-    borderRadius: 999,
-    marginTop: 25,
     overflow: "hidden",
   },
 
-  xpBarFill: {
+  xpFill: {
+    width: "65%",
     height: "100%",
     background:
-      "linear-gradient(90deg,#00e5ff,#ff00ff)",
-    borderRadius: 999,
+      "linear-gradient(90deg,#d946ef,#3b82f6)",
   },
 
-  dailyButton: {
-    marginTop: 25,
+  points: {
+    marginTop: 10,
+    fontSize: 22,
+  },
+
+  questionCard: {
+    background: "#111827",
+    borderRadius: 25,
+    padding: 20,
+    marginBottom: 20,
+    boxShadow: "0 0 20px #9333ea22",
+  },
+
+  questionTitle: {
+    color: "#f97316",
+    marginBottom: 15,
+  },
+
+  question: {
+    fontSize: 28,
+    marginBottom: 20,
+  },
+
+  answerButton: {
     width: "100%",
     padding: 18,
-    border: "none",
-    borderRadius: 18,
-    background:
-      "linear-gradient(90deg,#ff00ff,#6a00ff)",
+    marginBottom: 12,
+    borderRadius: 16,
+    border: "2px solid #333",
+    background: "#0f172a",
     color: "white",
     fontSize: 22,
-    fontWeight: "bold",
-    cursor: "pointer",
-    boxShadow: "0 0 25px #ff00ff88",
   },
 
-  menuGrid: {
-    marginTop: 30,
+  answerButtonActive: {
     width: "100%",
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 15,
+    padding: 18,
+    marginBottom: 12,
+    borderRadius: 16,
+    border: "none",
+    background:
+      "linear-gradient(90deg,#d946ef,#9333ea)",
+    color: "white",
+    fontSize: 22,
   },
 
-  menuCard: {
-    background: "rgba(255,255,255,0.06)",
-    borderRadius: 20,
-    padding: 25,
+  bigButton: {
+    width: "100%",
+    padding: 20,
+    borderRadius: 18,
+    border: "none",
+    background:
+      "linear-gradient(90deg,#9333ea,#d946ef)",
     color: "white",
-    fontSize: 24,
+    fontSize: 28,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+
+  bottomRow: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 10,
-    boxShadow: "0 0 20px #00e5ff22",
+    gap: 15,
+    marginBottom: 20,
+  },
+
+  smallCard: {
+    flex: 1,
+    background: "#111827",
+    padding: 20,
+    borderRadius: 20,
+    boxShadow: "0 0 20px #06b6d422",
+  },
+
+  claimButton: {
+    marginTop: 10,
+    width: "100%",
+    padding: 14,
+    borderRadius: 14,
+    border: "none",
+    background: "#3b82f6",
+    color: "white",
+    fontSize: 18,
+  },
+
+  leaderboard: {
+    background: "#111827",
+    borderRadius: 25,
+    padding: 20,
+    boxShadow: "0 0 20px #d946ef22",
+  },
+
+  player: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: 15,
+    borderBottom: "1px solid #222",
+    fontSize: 20,
   },
 };
 
