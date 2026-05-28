@@ -1,4 +1,3 @@
-```jsx
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
@@ -51,13 +50,12 @@ function App() {
         {
           phone: phone,
           pin: pin,
-          points: 10,
+          points: 0,
           rank: "Bronze",
         },
       ]);
 
     if (error) {
-      console.log(error);
       setError("Грешка при регистрация");
       return;
     }
@@ -68,58 +66,20 @@ function App() {
   if (user) {
     return (
       <div style={styles.container}>
-        <div style={styles.profileCard}>
+        <div style={styles.card}>
+          <h1 style={styles.title}>VOID WALKER</h1>
 
-          <h1 style={styles.logo}>
-            VR ESCAPE
-          </h1>
-
-          <div style={styles.avatar}></div>
-
-          <h2 style={styles.username}>
-            {user.phone}
-          </h2>
-
-          <p style={styles.rank}>
-            VOID WALKER
+          <p style={styles.text}>
+            Потребител: {user.phone}
           </p>
 
-          <div style={styles.pointsBox}>
-            <p style={styles.pointsLabel}>
-              ТОЧКИ
-            </p>
+          <p style={styles.points}>
+            {user.points} ТОЧКИ
+          </p>
 
-            <h1 style={styles.points}>
-              {user.points}
-            </h1>
-          </div>
-
-          <div style={styles.questionCard}>
-            <h2 style={styles.questionTitle}>
-              ВЪПРОС НА ДЕНЯ
-            </h2>
-
-            <p style={styles.question}>
-              Коя игра е най-продаваната в историята?
-            </p>
-
-            <button style={styles.answerButton}>
-              GTA V
-            </button>
-
-            <button style={styles.answerButtonCorrect}>
-              Minecraft
-            </button>
-
-            <button style={styles.answerButton}>
-              Fortnite
-            </button>
-
-            <button style={styles.answerButton}>
-              Roblox
-            </button>
-          </div>
-
+          <p style={styles.rank}>
+            Ранг: {user.rank}
+          </p>
         </div>
       </div>
     );
@@ -128,10 +88,7 @@ function App() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-
-        <h1 style={styles.title}>
-          VR ESCAPE
-        </h1>
+        <h1 style={styles.logo}>VR ESCAPE</h1>
 
         <input
           type="text"
@@ -162,7 +119,6 @@ function App() {
             {error}
           </p>
         )}
-
       </div>
     </div>
   );
@@ -176,11 +132,10 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    fontFamily: "Arial",
   },
 
   card: {
-    background: "#111c44",
+    background: "#0b1229",
     padding: 30,
     borderRadius: 30,
     width: "100%",
@@ -188,130 +143,47 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: 20,
-    boxShadow: "0 0 40px #a020f0",
-  },
-
-  profileCard: {
-    width: "100%",
-    maxWidth: 450,
-    background: "#111c44",
-    borderRadius: 30,
-    padding: 25,
-    display: "flex",
-    flexDirection: "column",
-    gap: 20,
-    boxShadow: "0 0 40px #a020f0",
+    boxShadow: "0 0 40px #8f00ff",
   },
 
   logo: {
-    color: "#ff4dff",
+    color: "#ff38ff",
     textAlign: "center",
-    fontSize: 48,
-    marginBottom: 10,
+    fontSize: 52,
+    fontWeight: "bold",
     textShadow: "0 0 20px #ff00ff",
   },
 
   title: {
-    color: "#ff4dff",
+    color: "#bb00ff",
     textAlign: "center",
     fontSize: 50,
-    marginBottom: 10,
-    textShadow: "0 0 20px #ff00ff",
+    textShadow: "0 0 20px #bb00ff",
   },
 
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: "50%",
-    background:
-      "linear-gradient(135deg, #ff00ff, #00d9ff)",
-    alignSelf: "center",
-    boxShadow: "0 0 25px #ff00ff",
-  },
-
-  username: {
+  text: {
     color: "white",
+    fontSize: 28,
     textAlign: "center",
-    fontSize: 38,
-    margin: 0,
-  },
-
-  rank: {
-    color: "#ff00ff",
-    textAlign: "center",
-    fontSize: 24,
-    marginTop: -10,
-    fontWeight: "bold",
-  },
-
-  pointsBox: {
-    background: "#1f2c5c",
-    borderRadius: 25,
-    padding: 20,
-    textAlign: "center",
-    boxShadow: "0 0 20px #7b2cff",
-  },
-
-  pointsLabel: {
-    color: "#00d9ff",
-    fontSize: 22,
-    marginBottom: 5,
   },
 
   points: {
-    color: "white",
-    fontSize: 60,
-    margin: 0,
-  },
-
-  questionCard: {
-    background: "#0d1435",
-    borderRadius: 25,
-    padding: 20,
-    display: "flex",
-    flexDirection: "column",
-    gap: 15,
-  },
-
-  questionTitle: {
-    color: "#ff6600",
-    fontSize: 28,
-    margin: 0,
-  },
-
-  question: {
-    color: "white",
-    fontSize: 24,
-    lineHeight: 1.4,
-  },
-
-  answerButton: {
-    padding: 18,
-    borderRadius: 18,
-    border: "2px solid #333",
-    background: "#111",
-    color: "white",
-    fontSize: 22,
-    cursor: "pointer",
-  },
-
-  answerButtonCorrect: {
-    padding: 18,
-    borderRadius: 18,
-    border: "none",
-    background:
-      "linear-gradient(90deg, #ff00ff, #8a2cff)",
-    color: "white",
-    fontSize: 22,
+    color: "#00e1ff",
+    fontSize: 42,
+    textAlign: "center",
     fontWeight: "bold",
-    cursor: "pointer",
-    boxShadow: "0 0 20px #ff00ff",
+  },
+
+  rank: {
+    color: "#ff38ff",
+    fontSize: 26,
+    textAlign: "center",
   },
 
   input: {
     padding: 20,
-    borderRadius: 20,
-    border: "3px solid #3388ff",
+    borderRadius: 22,
+    border: "3px solid #008cff",
     background: "black",
     color: "white",
     fontSize: 28,
@@ -320,10 +192,9 @@ const styles = {
 
   button: {
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 22,
     border: "none",
-    background:
-      "linear-gradient(90deg, #ff00ff, #d94dff)",
+    background: "linear-gradient(90deg,#ff00ff,#bb38ff)",
     color: "white",
     fontSize: 34,
     fontWeight: "bold",
@@ -332,10 +203,9 @@ const styles = {
 
   registerButton: {
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 22,
     border: "none",
-    background:
-      "linear-gradient(90deg, #00d9ff, #11b8d8)",
+    background: "linear-gradient(90deg,#00d9ff,#11b8d8)",
     color: "white",
     fontSize: 30,
     fontWeight: "bold",
@@ -346,9 +216,7 @@ const styles = {
     color: "red",
     textAlign: "center",
     fontSize: 28,
-    marginTop: 10,
   },
 };
 
 export default App;
-```
