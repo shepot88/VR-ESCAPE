@@ -46,7 +46,7 @@ function App() {
       .maybeSingle();
 
     if (existing) {
-      setError("Този телефон вече съществува");
+      setError("Телефонът вече съществува");
       return;
     }
 
@@ -56,8 +56,8 @@ function App() {
         {
           phone: phone.trim(),
           pin: pin.trim(),
-          points: 0,
-          rank: "Bronze",
+          points: 500,
+          rank: "VOID WALKER",
         },
       ])
       .select()
@@ -91,6 +91,7 @@ function App() {
           />
 
           <button onClick={login}>Вход</button>
+
           <button onClick={register}>Регистрация</button>
 
           {error && <p className="error">{error}</p>}
@@ -103,14 +104,25 @@ function App() {
     <div className="app">
       <div className="topBar">
         <h1>VR ESCAPE</h1>
+
+        <div className="bell">
+          🔔
+        </div>
       </div>
 
       <div className="profileCard">
         <div className="avatar"></div>
 
-        <div>
+        <div className="profileInfo">
           <h2>{user.phone}</h2>
-          <p>{user.rank}</p>
+
+          <p className="rank">
+            {user.rank}
+          </p>
+
+          <p className="xp">
+            1250 / 1800 XP
+          </p>
 
           <div className="xpBar">
             <div className="xpFill"></div>
@@ -121,20 +133,47 @@ function App() {
       <div className="questionCard">
         <h3>🔥 ВЪПРОС НА ДЕНЯ</h3>
 
-        <h2>Коя игра е най-продаваната?</h2>
+        <h2>
+          Коя игра е най-продаваната?
+        </h2>
 
-        <button>GTA V</button>
-        <button className="active">Minecraft</button>
-        <button>Fortnite</button>
-        <button>Roblox</button>
+        <button className="answer">
+          GTA V
+        </button>
+
+        <button className="answer active">
+          Minecraft
+        </button>
+
+        <button className="answer">
+          Fortnite
+        </button>
+
+        <button className="answer">
+          Roblox
+        </button>
       </div>
 
       <div className="bottomNav">
-        <div>🏠</div>
-        <div>🏆</div>
-        <div className="centerBtn">⌘</div>
-        <div>🎁</div>
-        <div>👤</div>
+        <div className="navItem activeNav">
+          🏠
+        </div>
+
+        <div className="navItem">
+          🏆
+        </div>
+
+        <div className="scanButton">
+          ⌘
+        </div>
+
+        <div className="navItem">
+          🎁
+        </div>
+
+        <div className="navItem">
+          👤
+        </div>
       </div>
     </div>
   );
