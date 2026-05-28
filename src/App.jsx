@@ -16,22 +16,23 @@ function App() {
     setError("");
 
     const { data, error } = await supabase
-      .from("clients")
-      .select("*")
-      .eq("phone", phone)
-      .eq("pin", pin);
+  .from("clients")
+  .select("*")
+  .eq("name", phone)
+  .eq("pin", pin)
+  .single();
 
     if (error) {
       setError("Server error");
       return;
     }
 
-    if (!data || data.length === 0) {
+    if (!data ) 
       setError("Грешен телефон или PIN");
       return;
     }
 
-    setUser(data[0]);
+    setUser(data);
   }
 
   async function register() {
