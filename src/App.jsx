@@ -24,40 +24,12 @@ function App() {
       .eq("pin", pin.trim())
       .maybeSingle();
 
-    if (!user) {
-  return (
-    <div className="loginScreen">
-      <div className="loginBox">
+    if (error || !data) {
+      setError("Грешен телефон или PIN");
+      return;
+    }
 
-        <h1 className="loginTitle">
-          VR ESCAPE
-        </h1>
-
-        <input
-          className="loginInput"
-          placeholder="Телефон"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-
-        <input
-          className="loginInput"
-          placeholder="PIN"
-          type="password"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-        />
-
-        <button
-          className="loginButton"
-          onClick={login}
-        >
-          Вход
-        </button>
-
-      </div>
-    </div>
-  );
+    setUser(data);
   }
 
   async function register() {
@@ -111,30 +83,40 @@ function App() {
 
   if (!user) {
     return (
-      <div className="loginPage">
+      <div className="loginScreen">
 
-        <div className="loginCard">
+        <div className="loginBox">
 
-          <h1>VR ESCAPE</h1>
+          <h1 className="loginTitle">
+            VR ESCAPE
+          </h1>
 
           <input
+            className="loginInput"
             placeholder="Телефон"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
 
           <input
+            className="loginInput"
             placeholder="PIN"
             type="password"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
           />
 
-          <button onClick={login}>
+          <button
+            className="loginButton"
+            onClick={login}
+          >
             Вход
           </button>
 
-          <button onClick={register}>
+          <button
+            className="loginButton"
+            onClick={register}
+          >
             Регистрация
           </button>
 
