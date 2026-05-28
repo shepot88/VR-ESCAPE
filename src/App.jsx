@@ -89,6 +89,7 @@ function App() {
   if (!user) {
     return (
       <div className="loginPage">
+
         <div className="loginCard">
 
           <h1>VR ESCAPE</h1>
@@ -121,6 +122,7 @@ function App() {
           )}
 
         </div>
+
       </div>
     );
   }
@@ -155,12 +157,14 @@ function App() {
           </p>
 
           <div className="xpBar">
+
             <div
               className="xpFill"
               style={{
                 width: `${(user.xp / 1800) * 100}%`,
               }}
             ></div>
+
           </div>
 
           <div className="stats">
