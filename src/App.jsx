@@ -18,11 +18,19 @@ function App() {
     const { data, error } = await supabase
       .from("clients")
       .select("*")
-      .eq("phone", phone)
-      .eq("pin", pin)
-      .single();
+      .eq("phone", phone.trim())
+      .eq("pin", pin.trim())
+      .maybeSingle();
 
-    if (error || !data) {
+    console.log(data);
+    console.log(error);
+
+    if (error) {
+      setError("Server error");
+      return;
+    }
+
+    if (!data) {
       setError("Грешен телефон или PIN");
       return;
     }
@@ -36,8 +44,8 @@ function App() {
     const { data: existingUser } = await supabase
       .from("clients")
       .select("*")
-      .eq("phone", phone)
-      .single();
+      .eq("phone", phone.trim())
+      .maybeSingle();
 
     if (existingUser) {
       setError("Този телефон вече съществува");
@@ -48,14 +56,15 @@ function App() {
       .from("clients")
       .insert([
         {
-          phone: phone,
-          pin: pin,
+          phone: phone.trim(),
+          pin: pin.trim(),
           points: 0,
           rank: "Bronze",
         },
       ]);
 
     if (error) {
+      console.log(error);
       setError("Грешка при регистрация");
       return;
     }
@@ -70,7 +79,7 @@ function App() {
           <h1 style={styles.title}>VOID WALKER</h1>
 
           <p style={styles.text}>
-            Потребител: {user.phone}
+            {user.phone}
           </p>
 
           <p style={styles.points}>
@@ -78,7 +87,7 @@ function App() {
           </p>
 
           <p style={styles.rank}>
-            Ранг: {user.rank}
+            {user.rank}
           </p>
         </div>
       </div>
@@ -163,12 +172,12 @@ const styles = {
 
   text: {
     color: "white",
-    fontSize: 28,
+    fontSize: 30,
     textAlign: "center",
   },
 
   points: {
-    color: "#00e1ff",
+    color: "#00d9ff",
     fontSize: 42,
     textAlign: "center",
     fontWeight: "bold",
@@ -176,7 +185,7 @@ const styles = {
 
   rank: {
     color: "#ff38ff",
-    fontSize: 26,
+    fontSize: 28,
     textAlign: "center",
   },
 
