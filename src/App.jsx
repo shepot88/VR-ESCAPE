@@ -14,6 +14,8 @@ function App() {
   const [error, setError] = useState("");
   const [selected, setSelected] = useState("");
 
+  const today = new Date().toISOString().split("T")[0];
+
   async function login() {
     setError("");
 
@@ -29,94 +31,64 @@ function App() {
       return;
     }
 
-    const updatedPoints = data.points + 10;
+    // Вход бонус само веднъж на ден
+    if (data.last_login !== today) {
+      const updatedPoints = data.points + 50;
+      const updatedXp = data.xp + 50;
+      const updatedStreak = data.streak + 1;
 
-    await supabase
-      .from("clients")
-      .update({
-        points: updatedPoints,
-      })
-      .eq("id", data.id);
+      await supabase
+        .from("clients")
+        .update({
+          points: updatedPoints,
+          xp: updatedXp,
+          streak: updatedStreak,
+          last_login: today,
+          answered_today: false
+        })
+        .eq("phone", data.phone);
 
-    setUser({
-      ...data,
-      points: updatedPoints,
-    });
-  }
-
-  async function register() {
-    setError("");
-
-    const { data: existing } = await supabase
-      .from("clients")
-      .select("*")
-      .eq("phone", phone.trim())
-      .maybeSingle();
-
-    if (existing) {
-      setError("Телефонът вече съществува");
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("clients")
-      .insert([
-        {
-          phone: phone.trim(),
-          pin: pin.trim(),
-          points: 100,
-          xp: 0,
-          streak: 1,
-          rank: "VOID WALKER",
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      setError(error.message);
-      return;
+      data.points = updatedPoints;
+      data.xp = updatedXp;
+      data.streak = updatedStreak;
+      data.last_login = today;
+      data.answered_today = false;
     }
 
     setUser(data);
   }
 
   async function answerQuestion(answer) {
-    if (selected) return;
+    if (user.answered_today) return;
 
     setSelected(answer);
 
-    let newXp = user.xp;
-    let newPoints = user.points;
+    if (answer === "GTA V") {
+      const newPoints = user.points + 100;
+      const newXp = user.xp + 100;
 
-    if (answer === "Minecraft") {
-      newXp += 50;
-      newPoints += 25;
+      await supabase
+        .from("clients")
+        .update({
+          points: newPoints,
+          xp: newXp,
+          answered_today: true
+        })
+        .eq("phone", user.phone);
 
-      alert("✅ Правилен отговор +50 XP");
-    } else {
-      alert("❌ Грешен отговор");
-    }
-
-    const { data, error } = await supabase
-      .from("clients")
-      .update({
-        xp: newXp,
+      setUser({
+        ...user,
         points: newPoints,
-      })
-      .eq("id", user.id)
-      .select()
-      .single();
-
-    if (!error) {
-      setUser(data);
+        xp: newXp,
+        answered_today: true
+      });
     }
   }
 
+  // LOGIN SCREEN
   if (!user) {
     return (
       <div className="loginScreen">
-
         <div className="loginBox">
 
           <h1 className="loginTitle">
@@ -145,36 +117,27 @@ function App() {
             Вход
           </button>
 
-          <button
-            className="loginButton"
-            onClick={register}
-          >
-            Регистрация
-          </button>
-
           {error && (
-            <p className="error">
+            <p style={{ color: "red", textAlign: "center" }}>
               {error}
             </p>
           )}
 
         </div>
-
       </div>
     );
   }
 
+  // MAIN APP
   return (
     <div className="app">
 
       <div className="topBar">
-
-        <h1>VR ESCAPE</h1>
+        <h1>SESSIONS</h1>
 
         <div className="bell">
           🔔
         </div>
-
       </div>
 
       <div className="profileCard">
@@ -183,25 +146,23 @@ function App() {
 
         <div className="profileInfo">
 
-          <h2>{user.phone}</h2>
+          <h2>{user.name}</h2>
 
-          <p className="rank">
+          <div className="rank">
             {user.rank}
-          </p>
+          </div>
 
-          <p className="xp">
-            {user.xp} / 1800 XP
-          </p>
+          <div className="xp">
+            {user.xp} XP
+          </div>
 
           <div className="xpBar">
-
             <div
               className="xpFill"
               style={{
-                width: `${(user.xp / 1800) * 100}%`,
+                width: `${Math.min((user.xp / 1800) * 100, 100)}%`
               }}
             ></div>
-
           </div>
 
           <div className="stats">
@@ -215,27 +176,16 @@ function App() {
             </div>
 
           </div>
-
         </div>
-
       </div>
 
       <div className="questionCard">
 
-        <h3>
-          🔥 ВЪПРОС НА ДЕНЯ
-        </h3>
+        <h3>🔥 ВЪПРОС НА ДЕНЯ</h3>
 
         <h2>
           Коя игра е най-продаваната?
         </h2>
-
-        <button
-          className={`answer ${selected === "GTA V" ? "active" : ""}`}
-          onClick={() => answerQuestion("GTA V")}
-        >
-          GTA V
-        </button>
 
         <button
           className={`answer ${selected === "Minecraft" ? "active" : ""}`}
@@ -245,17 +195,17 @@ function App() {
         </button>
 
         <button
+          className={`answer ${selected === "GTA V" ? "active" : ""}`}
+          onClick={() => answerQuestion("GTA V")}
+        >
+          GTA V
+        </button>
+
+        <button
           className={`answer ${selected === "Fortnite" ? "active" : ""}`}
           onClick={() => answerQuestion("Fortnite")}
         >
           Fortnite
-        </button>
-
-        <button
-          className={`answer ${selected === "Roblox" ? "active" : ""}`}
-          onClick={() => answerQuestion("Roblox")}
-        >
-          Roblox
         </button>
 
       </div>
@@ -263,11 +213,11 @@ function App() {
       <div className="bottomNav">
 
         <div className="navItem activeNav">
-          🏠
+          🏆
         </div>
 
         <div className="navItem">
-          🏆
+          🎁
         </div>
 
         <div className="scanButton">
@@ -275,7 +225,7 @@ function App() {
         </div>
 
         <div className="navItem">
-          🎁
+          🎮
         </div>
 
         <div className="navItem">
@@ -283,7 +233,6 @@ function App() {
         </div>
 
       </div>
-
     </div>
   );
 }
