@@ -4,17 +4,15 @@ import "./App.css";
 
 const supabase = createClient(
   "https://aumoiucfasixxayevfsn.supabase.co",
-  "ТУК_СЛОЖИ_ТВОЯ_SUPABASE_ANON_KEY"
+  "sb_publishable_h2_46fvtul7b1HfhCO7KLA_p0nDclkX"
 );
 
 function App() {
   const [phone, setPhone] = useState("");
   const [pin, setPin] = useState("");
-  const [name, setName] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState("");
-  const [registerMode, setRegisterMode] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -33,38 +31,31 @@ function App() {
       return;
     }
 
-    // бонус само веднъж на ден
     if (data.last_login !== today) {
-
-      const updatedPoints = data.points + 50;
-      const updatedXp = data.xp + 50;
-      const updatedStreak = data.streak + 1;
-
       await supabase
         .from("clients")
         .update({
-          points: updatedPoints,
-          xp: updatedXp,
-          streak: updatedStreak,
+          points: (data.points || 0) + 50,
+          xp: (data.xp || 0) + 50,
+          streak: (data.streak || 0) + 1,
           last_login: today,
-          answered_today: false
         })
-        .eq("phone", data.phone);
+        .eq("id", data.id);
 
-      data.points = updatedPoints;
-      data.xp = updatedXp;
-      data.streak = updatedStreak;
+      data.points += 50;
+      data.xp += 50;
+      data.streak += 1;
       data.last_login = today;
-      data.answered_today = false;
     }
 
     setUser(data);
   }
 
   async function register() {
+    setError("");
 
-    if (!name || !phone || !pin) {
-      setError("Попълни всичко");
+    if (!phone || !pin) {
+      setError("Попълни всички полета");
       return;
     }
 
@@ -75,84 +66,69 @@ function App() {
       .maybeSingle();
 
     if (existing) {
-      setError("Този телефон вече съществува");
+      setError("Телефонът вече съществува");
       return;
     }
 
-    const newUser = {
-      name,
-      phone,
-      pin,
-      points: 0,
-      xp: 0,
-      streak: 0,
-      rank: "VOID WALKER",
-      last_login: today,
-      answered_today: false
-    };
-
     const { error } = await supabase
       .from("clients")
-      .insert([newUser]);
+      .insert([
+        {
+          name: "PLAYER",
+          phone: phone.trim(),
+          pin: pin.trim(),
+          points: 0,
+          xp: 0,
+          streak: 0,
+          rank: "VOID WALKER",
+          answered_today: false,
+          last_login: today,
+        },
+      ]);
 
     if (error) {
       setError("Грешка при регистрация");
       return;
     }
 
-    setRegisterMode(false);
-    setError("");
+    login();
   }
 
   async function answerQuestion(answer) {
-
     if (user.answered_today) return;
 
     setSelected(answer);
 
     if (answer === "GTA V") {
-
+      const newXP = user.xp + 100;
       const newPoints = user.points + 100;
-      const newXp = user.xp + 100;
 
       await supabase
         .from("clients")
         .update({
+          xp: newXP,
           points: newPoints,
-          xp: newXp,
-          answered_today: true
+          answered_today: true,
         })
-        .eq("phone", user.phone);
+        .eq("id", user.id);
 
       setUser({
         ...user,
+        xp: newXP,
         points: newPoints,
-        xp: newXp,
-        answered_today: true
+        answered_today: true,
       });
     }
   }
 
-  // LOGIN SCREEN
   if (!user) {
-
     return (
       <div className="loginScreen">
-
         <div className="loginBox">
 
           <h1 className="loginTitle">
             VR ESCAPE
           </h1>
-
-          {registerMode && (
-            <input
-              className="loginInput"
-              placeholder="Име"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          )}
 
           <input
             className="loginInput"
@@ -169,56 +145,22 @@ function App() {
             onChange={(e) => setPin(e.target.value)}
           />
 
-          {!registerMode ? (
-            <>
-              <button
-                className="loginButton"
-                onClick={login}
-              >
-                Вход
-              </button>
+          <button
+            className="loginButton"
+            onClick={login}
+          >
+            Вход
+          </button>
 
-              <button
-                className="loginButton"
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  boxShadow: "none"
-                }}
-                onClick={() => setRegisterMode(true)}
-              >
-                Регистрация
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className="loginButton"
-                onClick={register}
-              >
-                Създай профил
-              </button>
-
-              <button
-                className="loginButton"
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  boxShadow: "none"
-                }}
-                onClick={() => setRegisterMode(false)}
-              >
-                Назад
-              </button>
-            </>
-          )}
+          <button
+            className="registerButton"
+            onClick={register}
+          >
+            Регистрация
+          </button>
 
           {error && (
-            <p
-              style={{
-                color: "#ff4d4d",
-                textAlign: "center",
-                marginTop: "10px"
-              }}
-            >
+            <p className="errorText">
               {error}
             </p>
           )}
@@ -228,27 +170,13 @@ function App() {
     );
   }
 
-  // APP
   return (
     <div className="app">
 
-      <div className="topBar">
-
-        <h1>SESSIONS</h1>
-
-        <div className="bell">
-          🔔
-        </div>
-
-      </div>
-
       <div className="profileCard">
-
-        <div className="avatar"></div>
-
         <div className="profileInfo">
 
-          <h2>{user.name}</h2>
+          <h2>{user.phone}</h2>
 
           <div className="rank">
             {user.rank}
@@ -262,21 +190,19 @@ function App() {
             <div
               className="xpFill"
               style={{
-                width: `${Math.min((user.xp / 1800) * 100, 100)}%`
+                width: `${(user.xp / 2000) * 100}%`,
               }}
-            ></div>
+            />
           </div>
 
           <div className="stats">
-
             <div className="statBox">
-              🔥 {user.streak} дни
+              💎 {user.points}
             </div>
 
             <div className="statBox">
-              💎 {user.points} точки
+              🔥 {user.streak}
             </div>
-
           </div>
 
         </div>
@@ -284,9 +210,7 @@ function App() {
 
       <div className="questionCard">
 
-        <h3>
-          🔥 ВЪПРОС НА ДЕНЯ
-        </h3>
+        <h3>🔥 ВЪПРОС НА ДЕНЯ</h3>
 
         <h2>
           Коя игра е най-продаваната?
@@ -312,30 +236,6 @@ function App() {
         >
           Fortnite
         </button>
-
-      </div>
-
-      <div className="bottomNav">
-
-        <div className="navItem activeNav">
-          🏆
-        </div>
-
-        <div className="navItem">
-          🎁
-        </div>
-
-        <div className="scanButton">
-          ⌘
-        </div>
-
-        <div className="navItem">
-          🎮
-        </div>
-
-        <div className="navItem">
-          👤
-        </div>
 
       </div>
 
