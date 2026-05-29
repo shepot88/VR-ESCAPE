@@ -19,14 +19,14 @@ function App() {
   async function login() {
     setError("");
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("clients")
       .select("*")
       .eq("phone", phone.trim())
       .eq("pin", pin.trim())
       .maybeSingle();
 
-    if (error || !data) {
+    if (!data) {
       setError("Грешен телефон или PIN");
       return;
     }
@@ -45,7 +45,6 @@ function App() {
       data.points += 50;
       data.xp += 50;
       data.streak += 1;
-      data.last_login = today;
     }
 
     setUser(data);
@@ -53,11 +52,6 @@ function App() {
 
   async function register() {
     setError("");
-
-    if (!phone || !pin) {
-      setError("Попълни всички полета");
-      return;
-    }
 
     const { data: existing } = await supabase
       .from("clients")
@@ -74,15 +68,14 @@ function App() {
       .from("clients")
       .insert([
         {
-          name: "PLAYER",
-          phone: phone.trim(),
-          pin: pin.trim(),
+          name: phone,
+          phone: phone,
+          pin: pin,
           points: 0,
           xp: 0,
           streak: 0,
           rank: "VOID WALKER",
           answered_today: false,
-          last_login: today,
         },
       ]);
 
@@ -99,7 +92,7 @@ function App() {
 
     setSelected(answer);
 
-    if (answer === "GTA V") {
+    if (answer === "Minecraft") {
       const newXP = user.xp + 100;
       const newPoints = user.points + 100;
 
@@ -124,6 +117,9 @@ function App() {
   if (!user) {
     return (
       <div className="loginScreen">
+
+        <div className="loginGlow"></div>
+
         <div className="loginBox">
 
           <h1 className="loginTitle">
@@ -173,7 +169,22 @@ function App() {
   return (
     <div className="app">
 
+      <div className="topBar">
+
+        <div className="logo">
+          VR ESCAPE
+        </div>
+
+        <div className="bell">
+          🔔
+        </div>
+
+      </div>
+
       <div className="profileCard">
+
+        <div className="avatar"></div>
+
         <div className="profileInfo">
 
           <h2>{user.phone}</h2>
@@ -182,20 +193,21 @@ function App() {
             {user.rank}
           </div>
 
-          <div className="xp">
-            {user.xp} XP
+          <div className="xpText">
+            {user.xp} / 1800 XP
           </div>
 
           <div className="xpBar">
             <div
               className="xpFill"
               style={{
-                width: `${(user.xp / 2000) * 100}%`,
+                width: `${(user.xp / 1800) * 100}%`,
               }}
-            />
+            ></div>
           </div>
 
           <div className="stats">
+
             <div className="statBox">
               💎 {user.points}
             </div>
@@ -203,25 +215,22 @@ function App() {
             <div className="statBox">
               🔥 {user.streak}
             </div>
+
           </div>
 
         </div>
+
       </div>
 
       <div className="questionCard">
 
-        <h3>🔥 ВЪПРОС НА ДЕНЯ</h3>
+        <div className="questionHeader">
+          🔥 ВЪПРОС НА ДЕНЯ
+        </div>
 
-        <h2>
+        <div className="questionText">
           Коя игра е най-продаваната?
-        </h2>
-
-        <button
-          className={`answer ${selected === "Minecraft" ? "active" : ""}`}
-          onClick={() => answerQuestion("Minecraft")}
-        >
-          Minecraft
-        </button>
+        </div>
 
         <button
           className={`answer ${selected === "GTA V" ? "active" : ""}`}
@@ -231,11 +240,49 @@ function App() {
         </button>
 
         <button
+          className={`answer ${selected === "Minecraft" ? "active" : ""}`}
+          onClick={() => answerQuestion("Minecraft")}
+        >
+          Minecraft
+        </button>
+
+        <button
           className={`answer ${selected === "Fortnite" ? "active" : ""}`}
           onClick={() => answerQuestion("Fortnite")}
         >
           Fortnite
         </button>
+
+        <button
+          className={`answer ${selected === "Roblox" ? "active" : ""}`}
+          onClick={() => answerQuestion("Roblox")}
+        >
+          Roblox
+        </button>
+
+      </div>
+
+      <div className="bottomNav">
+
+        <div className="navItem activeNav">
+          🏠
+        </div>
+
+        <div className="navItem">
+          🏆
+        </div>
+
+        <div className="scanButton">
+          ⌘
+        </div>
+
+        <div className="navItem">
+          🎁
+        </div>
+
+        <div className="navItem">
+          👤
+        </div>
 
       </div>
 
@@ -243,4 +290,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
